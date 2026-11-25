@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <title>여행 코스 추천</title>
+    <script>
+        function sendBtn(){
+            const send_data = $('#data').val();
+            console.log('데이터 : ' + send_data);
+
+            if(send_data == ''){
+                alert('여행지를 입력하셔야 검색이 가능합니다.');
+                return;
+            }
+
+            $('#intro').text('여행 코스를 만드는 중입니다...');
+            $('#result').text('');
+
+            $.ajax({
+                url:'/tour/ajax_data/',
+                type:'post',
+                headers:{'X-CSRFToken':'{{csrf_token}}'},
+                data:{'data':send_data},
+                dataType:'json',
+                success:function(data){
+                    console.log(data)
+                    $('#input_data').text(send_data);
+                    $('#intro').text(data.intro);
+                    $('#result').text(data.result);
+                },
+                error:function(){
+                    alert('여행 코스를 가져오는데 오류가 발생했습니다. 다시 시도해주세요.')
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+    <a href="/">메인으로</a>
+
+    <div>
+        <h1>경주 · 내장산 · 설악산</h1>
+        <label>위 여행지 중 하나를 입력하세요</label><br/>
+        <input type='text' name='data' id='data'>
+        <button type='button' onclick='sendBtn()'>검색</button>
+        <br>
+        <br>
+        <div>여행지 : <span id='input_data'>데이터입력필요</span></div>
+
+        <h2>[소개]</h2>
+        <div id='intro'></div>
+
+        <h2>[1박 2일 여행코스]</h2>
+        <pre id='result'></pre>
+    </div>
+
+</body>
+</html>
